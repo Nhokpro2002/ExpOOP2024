@@ -1,0 +1,387 @@
+package hus.oop.lab8.countryarraymanager;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class App {
+    private static final String COMMA_DELIMITER = ",";
+    private static final CountryArrayManager countryManager = new CountryArrayManager();
+
+    public static void main(String[] args) {
+        init();
+
+
+        /* TODO: write code to test program */
+        System.out.print("Test data init:\n");
+        testOriginalData();
+        System.out.println();
+
+        // Test sortByDecreasingPopulation()
+        System.out.println("Countries are arranged in order of population decrease:");
+        testSortDecreasingByPopulation();
+        System.out.println();
+
+        // Test sortByIncreasingPopulation()
+        System.out.println("Countries are arranged in order of population increase:");
+        testSortIncreasingByPopulation();
+        System.out.println();
+
+        // Test sortByDecreasingGdp()
+        System.out.println("Countries are arranged in order of gdp decreasing");
+        testSortDecreasingByGdp();
+        System.out.println();
+
+        // Test sortByIncreasingGdp()
+        System.out.println("Countries are arranged in order of gdp increasing");
+        testSortIncreasingByGdp();
+        System.out.println();
+
+        // Test sortByIncreasingArea()
+        System.out.println("Countries are arranged in order of area increasing");
+        testSortIncreasingByArea();
+        System.out.println();
+
+        // Test sortByDecreasingArea()
+        System.out.println("Countries are arranged in order of area decreasing");
+        testSortDecreasingByArea();
+        System.out.println();
+
+        // Test sortByIncreasingPopulation()
+        System.out.println("Countries are arranged in order of population increase:");
+        testSortIncreasingByPopulation();
+        System.out.println();
+
+        // Test sortByIncreasingArea()
+        System.out.println("Countries are arranged in order of population increase:");
+        testSortIncreasingByArea();
+        System.out.println();
+
+        // Test sortByDecreasingArea()
+        System.out.println("Countries are arranged in order of population decrease:");
+        testSortDecreasingByArea();
+        System.out.println();
+
+        // Test sortByIncreasingGdp()
+        System.out.println("Countries are arranged in order of gdp increase:");
+        testSortIncreasingByGdp();
+        System.out.println();
+
+        // Test sortByDecreasingGdp()
+        System.out.println("Countries are arranged in order of gdp decrease:");
+        testSortDecreasingByGdp();
+        System.out.println();
+
+        /* TODO */
+        // Test filterAfricaCountry()
+        System.out.println("AfricaCountry:");
+        testFilterAfricaCountry();
+
+        // Test filterAsiaCountry()
+        System.out.println("AsiaCountry:");
+        testFilterAsiaCountry();
+
+        // Test filterEuropeCountry()
+        System.out.println("EuropeCountry:");
+        testFilterEuropeCountry();
+
+        // Test filterNorthAmericaCountry()
+        System.out.println("NorthAmericaCountry:");
+        testFilterNorthAmericaCountry();
+
+        // Test filterSouthAmericaCountry()
+        System.out.println("SouthAmericaCountry:");
+        testFilterSouthAmericaCountry();
+
+        // Test filterOceaniaCountry()
+        System.out.println("OceaniaCountry:");
+        testFilterOceaniaCountry();
+        System.out.println();
+
+        /* TODO */
+        // testFilterMostPopulousCountries()
+        System.out.println("Countries have most population:");
+        testFilterMostPopulousCountries();
+
+        // testFilterLeastPopulousCountries()
+        System.out.println("Countries have least population");
+        testFilterLeastPopulousCountries();
+
+        // testFilterLargestAreaCountries()
+        System.out.println("Countries have largest area");
+        testFilterLargestAreaCountries();
+
+        // testFilterSmallestAreaCountries()
+        System.out.println("Countries have smallest area");
+        testFilterSmallestAreaCountries();
+
+        // testFilterHighestGdpCountries()
+        System.out.println("Countries have highest gdp");
+        testFilterHighestGdpCountries();
+
+        // testFilterLowestDgpCountries()
+        System.out.println("Countries have lowest gdp");
+        testFilterLowestGdpCountries();
+
+    }
+
+    public static void readListData(String filePath) {
+        BufferedReader dataReader = null;
+        try {
+            dataReader = new BufferedReader(new FileReader(filePath));
+
+            // Read file in java line by line.
+            String line;
+            while ((line = dataReader.readLine()) != null) {
+                List<String> dataList = parseDataLineToList(line);
+
+                if (dataList.get(0).equals("code")) {
+                    continue;
+                }
+
+                if (dataList.size() != 6) {
+                    continue;
+                }
+
+                /*
+                 * TODO: create Country and append countries into
+                 * CountryArrayManager here.
+                 */
+
+                try {
+                    String code = dataList.get(0);
+                    String name = dataList.get(1);
+                    int population = Integer.parseInt(dataList.get(2));
+                    double area = Double.parseDouble(dataList.get(3));
+                    double gdp = Double.parseDouble(dataList.get(4));
+                    String continent = dataList.get(5);
+
+                    Country country;
+
+                    // Create specific country objects based on continent
+                    switch (continent.toLowerCase()) {
+                        case "africa":
+                            country = new AfricaCountry(code, name, population, area, gdp);
+                            break;
+                        case "asia":
+                            country = new AsiaCountry(code, name, population, area, gdp);
+                            break;
+                        case "north america":
+                            country = new NorthAmericaCountry(code, name, population, area, gdp);
+                            break;
+                        case "south america":
+                            country = new SouthAmericaCountry(code, name, population, area, gdp);
+                            break;
+                        case "oceania":
+                            country = new OceaniaCountry(code, name, population, area, gdp);
+                            break;
+                        case "europe":
+                            country = new EuropeCountry(code, name, population, area, gdp);
+                            break;
+                        default:
+                            System.err.println("Unknown continent: " + continent);
+                            continue;
+                    }
+
+                    countryManager.append(country);
+
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid data format in line: " + line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (dataReader != null) {
+                    dataReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static List<String> parseDataLineToList(String dataLine) {
+        List<String> result = new ArrayList<>();
+        if (dataLine != null) {
+            String[] splitData = dataLine.split(COMMA_DELIMITER);
+            for (int i = 0; i < splitData.length; i++) {
+                result.add(splitData[i]);
+            }
+        }
+
+        return result;
+    }
+
+    public static String[] parseDataLineToArray(String dataLine) {
+        if (dataLine == null) {
+            return null;
+        }
+
+        return dataLine.split(COMMA_DELIMITER);
+    }
+
+    public static void init() {
+        String filePath = "D:\\ProjectJava\\OOP2024_ProjectJava\\src\\hus\\oop\\ZipFolder\\countries.csv";
+        readListData(filePath);
+    }
+
+    public static void testOriginalData() {
+        String codesString = CountryArrayManager.codeOfCountriesToString(countryManager.getCountries());
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortIncreasingByPopulation() {
+        /* TODO */
+        Country[] countries = countryManager.sortByIncreasingPopulation();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortDecreasingByPopulation() {
+        /* TODO */
+        Country[] countries = countryManager.sortByDecreasingPopulation();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortIncreasingByArea() {
+        /* TODO */
+        Country[] countries = countryManager.sortByIncreasingArea();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortDecreasingByArea() {
+        /* TODO */
+        Country[] countries = countryManager.sortByDecreasingArea();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortIncreasingByGdp() {
+        /* TODO */
+        Country[] countries = countryManager.sortByIncreasingGdp();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testSortDecreasingByGdp() {
+        /* TODO */
+        Country[] countries = countryManager.sortByDecreasingGdp();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterAfricaCountry() {
+        /* TODO */
+        AfricaCountry[] countries = countryManager.filterAfricaCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterAsiaCountry() {
+        /* TODO */
+        AsiaCountry[] countries = countryManager.filterAsiaCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterEuropeCountry() {
+        /* TODO */
+        EuropeCountry[] countries = countryManager.filterEuropeCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterNorthAmericaCountry() {
+        /* TODO */
+        NorthAmericaCountry[] countries = countryManager.filterNorthAmericaCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+
+    }
+
+    public static void testFilterOceaniaCountry() {
+        /* TODO */
+        OceaniaCountry[] countries = countryManager.filterOceaniaCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterSouthAmericaCountry() {
+        /* TODO */
+        SouthAmericaCountry[] countries = countryManager.filterSouthAmericaCountry();
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterMostPopulousCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterMostPopulousCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterLeastPopulousCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterLeastPopulousCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterLargestAreaCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterLargestAreaCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterSmallestAreaCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterSmallestAreaCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterHighestGdpCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterHighestGdpCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+
+    public static void testFilterLowestGdpCountries() {
+        /* TODO */
+        Country[] countries = countryManager.filterLowestGdpCountries(3);
+        String codesString = CountryArrayManager.codeOfCountriesToString(countries);
+        System.out.print(codesString);
+        System.out.println();
+    }
+}
